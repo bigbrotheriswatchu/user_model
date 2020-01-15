@@ -1,0 +1,45 @@
+{% extends 'user_example/base_user.html' %}
+{% block content %}
+
+    {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+            Неверные данные
+        </div>
+    {% endif %}
+
+    {% if next %}
+        <p>Hey, u cannot access that page!</p>
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+
+       <div class="form-group">
+        <label>Email:</label>
+        <input type="email" class="form-control col-4"
+
+               aria-describedby="emailHelp"
+               placeholder="Введите email"
+               {{ form.email }}
+      </div>
+
+      <div class="form-group">
+        <label>Login:</label>
+
+        <input type="login" class="form-control w-25"
+
+               aria-describedby="loginHelp"
+               placeholder="Введите логин"
+               {{ form.username }}>
+        </input>
+      </div>
+
+      <div class="form-group">
+        <label>Password:</label>
+        <input type="password" class="form-control w-25"
+               placeholder="Введите пароль"
+               {{ form.password }}
+      </div>
+      <button type="submit" class="btn btn-primary mt-3">Submit</button>
+    </form>
+{% endblock %}

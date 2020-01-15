@@ -1,0 +1,17 @@
+{% extends 'user_example/base_user.html' %}
+
+{% block content %}
+    <h3>Регистрация: </h3>
+
+
+     <form method="post" action="{% url 'register' %}">
+         {% csrf_token %}
+         {% if form.errors %}
+            <div class="alert alert-danger" role="alert">
+                Обнаружена ошибка, попробуйте еще раз
+            </div>
+        {% endif %}
+         {{ form }}
+      <input type="submit" value="Registration" class="btn btn-primary mt-3">
+    </form>
+{% endblock %}
