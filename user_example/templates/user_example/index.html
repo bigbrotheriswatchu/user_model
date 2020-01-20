@@ -7,6 +7,23 @@
     </title>
 
 
+
+   {% block login %}
+        {% if request.user.is_authenticated %}
+            <a class="nav-link disabled text-light" href="{% url 'profile' pk=user.userprofile.pk %}" >Моя страница</a>
+        {% else %}
+            <a class="nav-link disabled text-light" href="accounts/login" >Войдите в профиль</a>
+        {% endif %}
+    {% endblock %}
+
+
 {% block content %}
-    <h1>Hi math</h1>
+    {% for person in users %}
+    <div class="container mt-5">
+        <p> {{ person.first_name }} {{ person.last_name }}</p>
+        <p>{{ person.location }}</p>
+        <p>{{ person.age }}</p>
+        <a class="btn btn-primary" href="{% url 'profile' pk=person.pk %}">Смотреть профиль</a>
+    </div>
+    {% endfor %}
 {% endblock %}

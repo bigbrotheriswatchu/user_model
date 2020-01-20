@@ -1,0 +1,25 @@
+{% extends 'user_example/base_user.html' %}
+
+<title>
+    {% block title %}
+        {{ profile.last_name }}
+    {% endblock %}
+</title>
+
+    {% block login %}
+
+    {% endblock %}
+
+    {% block content %}
+    <div class="col-4 ml-5 mt-5 mx-auto  text-center">
+        <br>
+        <h3>{{ profile.user.email }}</h3>
+        <h3>{{ profile.first_name }}</h3>
+        <br>
+        <h3>{{ profile.last_name }}</h3>
+        <p>{{ profile.age }}</p>
+        <p>{{ profile.location }}</p>
+
+        <a href="{% url 'profile_edit' pk=profile.pk %}">Изменить профиль</a>
+    </div>
+    {% endblock %}

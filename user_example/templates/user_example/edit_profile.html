@@ -1,0 +1,49 @@
+{% extends 'user_example/base_user.html' %}
+
+<title>
+    {% block title %}
+        {{ profile.last_name }}
+    {% endblock %}
+</title>
+
+    {% block login %}
+
+    {% endblock %}
+
+    {% block content %}
+    <h1>Добавление информации: </h1>
+    <form method="POST" class="form-group" >
+        {% csrf_token %}
+        <div class="form-row mt-3">
+            <div class="col">
+              <input type="text" class="form-control" placeholder="First name" {{ form.favorite_auths }}
+            </div>
+            <div class="col">
+              <input type="text" class="form-control" placeholder="Last name" {{ form.location }}
+            </div>
+        </div>
+        <div class="form-row mt-3">
+            <div class="col">
+              <input type="text" class="form-control" placeholder="First name" {{ form.first_name }}
+            </div>
+            <div class="col">
+              <input type="text" class="form-control" placeholder="Last name" {{ form.last_name }}
+            </div>
+        </div>
+        <div class="form-row mt-3">
+            <div class="col">
+              <input type="text" class="form-control" placeholder="First name" {{ form.favorite_auths }}
+            </div>
+            <div class="col">
+              <input type="text" class="form-control" placeholder="Last name" {{ form.favorite_books }}
+            </div>
+            <div class="col">
+              <input type="text" class="form-control" placeholder="Last name" {{ form.favorite_quote }}
+            </div>
+        </div>
+
+        <input class="form-control form-control-sm col-1 mt-3" type="text" placeholder=".form-control-sm" {{ form.age }}
+        <button type="submit" class="btn btn-success mt-3" >Сохранить</button>
+
+    </form>
+    {% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'user_example/base_user.html' %}
+
+     <form method="post" action="{% url 'about_profile' %}">
+         {% csrf_token %}
+         {% if profile.errors %}
+            <div class="alert alert-danger" role="alert">
+                Обнаружена ошибка, попробуйте еще раз
+            </div>
+         {% endif %}
+         {{ profile.as_p }}
+      <input type="submit" value="Сохранить" class="btn btn-primary mt-3">
+    </form>
+
