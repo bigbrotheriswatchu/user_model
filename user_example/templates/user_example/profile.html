@@ -11,15 +11,38 @@
     {% endblock %}
 
     {% block content %}
-    <div class="col-4 ml-5 mt-5 mx-auto  text-center">
-        <br>
-        <h3>{{ profile.user.email }}</h3>
-        <h3>{{ profile.first_name }}</h3>
-        <br>
-        <h3>{{ profile.last_name }}</h3>
-        <p>{{ profile.age }}</p>
-        <p>{{ profile.location }}</p>
+        <div class="col-4 ml-5 mt-5 mx-auto  text-center">
+            <br>
+            <h3>{{ profile.user.email }}</h3>
+            <h3>{{ profile.first_name }}</h3>
+            <br>
+            <h3>{{ profile.last_name }}</h3>
+            <p>{{ profile.age }}</p>
+            <p>{{ profile.location }}</p>
 
-        <a href="{% url 'profile_edit' pk=profile.pk %}">Изменить профиль</a>
-    </div>
+            <a href="{% url 'profile_edit' pk=profile.pk %}">Изменить профиль</a>
+        </div>
+
+        <form method="POST" class="form-group w-50 mt-4 mx-auto">
+          {% csrf_token %}
+          <div class="form-group">
+            <input type="text" class="form-control col-5" id="formGroupExampleInput2" placeholder="Автор книги" {{ form.book_author }}
+            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Название книги" {{ form.book_name }}
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Введите текст" {{ form.book_review }} </textarea>
+          </div>
+
+          <button type="submit" class="btn btn-success" >Опубликовать</button>
+        </form>
+
+        {% for element in posts %}
+            <div class="card w-50 mx-auto mt-5">
+                <div class="card-body">
+                    <h5 class="card-title">{{ element.book_author }}</h5>
+                    <h5 class="card-title">{{ element.book_name }}</h5>
+                    <p class="card-text">this is post of <h1>{{ element.book_review }}</h1></p>
+                    <p> {{ element.created_at }}</p>
+                    <a href="#" class="btn btn-primary">Button</a>
+                </div>
+            </div>
+            {% endfor %}
     {% endblock %}

@@ -10,7 +10,13 @@
 
    {% block login %}
         {% if request.user.is_authenticated %}
-            <a class="nav-link disabled text-light" href="{% url 'profile' pk=user.userprofile.pk %}" >Моя страница</a>
+            {% if request.user.is_staff %}
+                <a class="nav-link disabled text-light" href="/admin" >Вы админ</a>
+            {% else %}
+                <a class="nav-link disabled text-light" href="{% url 'profile' pk=request.user.userprofile.pk %}" >
+                    Моя страница
+                </a>
+            {% endif %}
         {% else %}
             <a class="nav-link disabled text-light" href="accounts/login" >Войдите в профиль</a>
         {% endif %}
@@ -18,12 +24,15 @@
 
 
 {% block content %}
-    {% for person in users %}
-    <div class="container mt-5">
-        <p> {{ person.first_name }} {{ person.last_name }}</p>
-        <p>{{ person.location }}</p>
-        <p>{{ person.age }}</p>
-        <a class="btn btn-primary" href="{% url 'profile' pk=person.pk %}">Смотреть профиль</a>
-    </div>
+    {% for post in posts %}
+        <div class="card w-50 mx-auto mt-5">
+            <div class="card-body">
+                <h3 class="card-title">Автор: {{ post.book_author }}</h3>
+                <h3 class="card-title">Книга: {{ post.book_name }}</h3>
+                <p class="card-text">{{ post.book_review }}</p>
+                <p> {{ post.created_at }}</p>
+                <p class="card-text">{{ request.user.userprofile }}</p>
+            </div>
+        </div>
     {% endfor %}
 {% endblock %}

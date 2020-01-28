@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.db import models
-from .models import UserProfile
+from .models import UserProfile, PostProfile
 
 
 class ExtendedUserCreationForm(UserCreationForm):
@@ -28,3 +28,9 @@ class UserProfileForm(forms.ModelForm):
         fields = ('first_name', 'last_name', 'age', 'location',
                   'favorite_auths', 'favorite_books', 'favorite_quote'
                   )
+
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = PostProfile
+        fields = ('book_author', 'book_name', 'book_review')

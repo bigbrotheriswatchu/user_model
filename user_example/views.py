@@ -2,29 +2,40 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
-from .forms import ExtendedUserCreationForm, UserProfileForm
-from .models import UserProfile
+from django.utils import timezone
+
+from .forms import ExtendedUserCreationForm, UserProfileForm, PostForm
+from .models import UserProfile, PostProfile
 from django.contrib.auth.models import User
 
 
-
 def index(request):
-    users = UserProfile.objects.all()
-    if request.user.is_authenticated:
-        username = request.user.first_name
-    else:
-        username = "войдите в аккаунт"
-    return render(request, 'user_example/index.html', context={
-                                                               'users': users,
+    posts = PostProfile.objects.filter().order_by('-created_at')
+
+    return render(request, 'user_example/index.html', context={'posts': posts,
                                                                })
 
 
 @login_required
 def profile(request, pk):
     profile = get_object_or_404(UserProfile, pk=pk)
-    user = request.user.first_name
-    return render(request, 'user_example/profile.html', context={'user': user,
+
+    user = get_object_or_404(User, pk=pk)
+    posts = PostProfile.objects.filter(author=user)
+
+    if request.method == 'POST':
+        post_form = PostForm(request.POST)
+        if post_form.is_valid():
+            post_form = post_form.save(commit=False)
+            post_form.author = request.user
+            post_form.created_at = timezone.now()
+            post_form.save()
+            return redirect('profile', pk=profile.pk)
+    else:
+        post_form = PostForm()
+    return render(request, 'user_example/profile.html', context={'posts': posts,
                                                                  'profile': profile,
+                                                                 'form': post_form,
                                                                  })
 
 
@@ -72,3 +83,5 @@ def profile_edit(request, pk):
     context = {'form': form}
 
     return render(request, 'user_example/edit_profile.html', context=context)
+
+
