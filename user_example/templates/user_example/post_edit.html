@@ -1,0 +1,14 @@
+{% extends 'user_example/base_user.html' %}
+
+{% block content %}
+    <form method="POST" class="form-group w-50 mt-4 mx-auto">
+        {% csrf_token %}
+        <div class="form-group">
+            <input type="text" class="form-control col-5" id="formGroupExampleInput2" placeholder="Автор книги" {{ form.book_author }}
+            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Название книги" {{ form.book_name }}
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Введите текст" {{ form.book_review }} </textarea>
+        </div>
+
+          <button type="submit" class="btn btn-success" >Опубликовать</button>
+        </form>
+{% endblock %}

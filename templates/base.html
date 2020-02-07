@@ -42,17 +42,21 @@
   <div class="collapse navbar-collapse" id="navbarsExampleDefault">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
-        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Link</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link disabled" href="#">Disabled</a>
+        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
       </li>
 
       <li class="nav-item text-light" >
-        {% block login %} {% endblock %}
+        {% if request.user.is_authenticated %}
+            {% if request.user.is_staff %}
+                <a class="nav-link disabled text-light" href="/admin" >Вы админ</a>
+            {% else %}
+                <a class="nav-link disabled text-light" href="{% url 'profile' pk=request.user.userprofile.pk %}" >
+                    {{ request.user.userprofile.first_name }} {{ request.user.userprofile.last_name }}
+                </a>
+            {% endif %}
+        {% else %}
+            <a class="nav-link disabled text-light" href="accounts/login" >Войдите в профиль</a>
+        {% endif %}
       </li>
 
     </ul>
@@ -65,7 +69,8 @@
   <!-- Main jumbotron for a primary marketing message or call to action -->
   <div class="jumbotron">
     <div class="container">
-        {% block content %} {% endblock %}
+        {% block content %}
+        {% endblock %}
     </div>
   </div>
 

@@ -1,0 +1,13 @@
+{% extends 'user_example/base_user.html' %}
+
+{% block content %}
+    <div class="card w-50 mx-auto mt-5">
+        <div class="card-body">
+            <h5 class="card-title">{{ post.book_author }}</h5>
+            <h5 class="card-title">{{ post.book_name }}</h5>
+            <p class="card-text">{{ post.book_review }}</p>
+            <p> {{ post.created_at }}</p>
+            <p> likes: {{ post.likes.count }} </p>
+        </div>
+    </div>
+{% endblock %}

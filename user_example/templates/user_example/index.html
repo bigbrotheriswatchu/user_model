@@ -7,32 +7,58 @@
     </title>
 
 
-
-   {% block login %}
-        {% if request.user.is_authenticated %}
-            {% if request.user.is_staff %}
-                <a class="nav-link disabled text-light" href="/admin" >Вы админ</a>
-            {% else %}
-                <a class="nav-link disabled text-light" href="{% url 'profile' pk=request.user.userprofile.pk %}" >
-                    Моя страница
-                </a>
-            {% endif %}
-        {% else %}
-            <a class="nav-link disabled text-light" href="accounts/login" >Войдите в профиль</a>
-        {% endif %}
-    {% endblock %}
-
-
 {% block content %}
-    {% for post in posts %}
+    <h2 class="text-center mt-5">Популярные посты:</h2>
+    {% for post in page_obj.object_list %}
         <div class="card w-50 mx-auto mt-5">
             <div class="card-body">
                 <h3 class="card-title">Автор: {{ post.book_author }}</h3>
                 <h3 class="card-title">Книга: {{ post.book_name }}</h3>
-                <p class="card-text">{{ post.book_review }}</p>
+                <p class="card-text">{{ post.book_review|truncatechars:200 }}</p>
                 <p> {{ post.created_at }}</p>
-                <p class="card-text">{{ request.user.userprofile }}</p>
+                <p> likes: {{post.likes.count }}</p>
+                <p class="card-text">Автор поста: <a href="{% url 'profile' pk=post.author.userprofile.pk %}">{{ post.author.userprofile.first_name }} {{ post.author.userprofile.last_name }}</a></p>
+                <a href="{% url 'post_detail' pk=post.pk %}" class="btn btn-primary">Читать полностью</a>
             </div>
+
         </div>
     {% endfor %}
+
+    <div class="w-50 mx-auto mt-3">
+        <nav aria-label="...">
+          <ul class="pagination">
+           {% if not page_obj.has_previous %}
+                <li class="page-item disabled">
+                  <a class="page-link" href="{{ prev }}" tabindex="-1" aria-disabled="true">Previous</a>
+                </li>
+           {% else %}
+                <li class="page-item">
+                  <a class="page-link" href="{{ prev }}" tabindex="-1" aria-disabled="true">Previous</a>
+                </li>
+           {% endif %}
+
+           {% for n in page_obj.paginator.page_range %}
+               {% if n == page_obj.number %}
+                    <li class="page-item active" aria-current="page">
+                        <a class="page-link" href="?page= {{ n }}">{{ n }}<span class="sr-only">(current)</span></a>
+                    </li>
+               {% elif n > page_obj.number|add:-3 and n < page_obj.number|add:3 %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page= {{ n }}">{{ n }}</a>
+                    </li>
+               {% endif %}
+           {% endfor %}
+
+           {% if not page_obj.has_next %}
+                <li class="page-item disabled">
+                  <a class="page-link" href="{{ next }}">Next</a>
+                </li>
+           {% else %}
+                <li class="page-item">
+                  <a class="page-link" href="{{ next }}">Next</a>
+                </li>
+           {% endif %}
+          </ul>
+        </nav>
+    </div>
 {% endblock %}

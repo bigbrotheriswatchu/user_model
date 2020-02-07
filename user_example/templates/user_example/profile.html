@@ -6,9 +6,6 @@
     {% endblock %}
 </title>
 
-    {% block login %}
-
-    {% endblock %}
 
     {% block content %}
         <div class="col-4 ml-5 mt-5 mx-auto  text-center">
@@ -19,10 +16,12 @@
             <h3>{{ profile.last_name }}</h3>
             <p>{{ profile.age }}</p>
             <p>{{ profile.location }}</p>
-
-            <a href="{% url 'profile_edit' pk=profile.pk %}">Изменить профиль</a>
+            {% if profile.user == request.user %}
+                <a href="{% url 'profile_edit' pk=profile.pk %}">Изменить профиль</a>
+            {% endif %}
         </div>
 
+    {% if profile.user == request.user %}
         <form method="POST" class="form-group w-50 mt-4 mx-auto">
           {% csrf_token %}
           <div class="form-group">
@@ -33,16 +32,22 @@
 
           <button type="submit" class="btn btn-success" >Опубликовать</button>
         </form>
+    {% endif %}
 
-        {% for element in posts %}
-            <div class="card w-50 mx-auto mt-5">
-                <div class="card-body">
-                    <h5 class="card-title">{{ element.book_author }}</h5>
-                    <h5 class="card-title">{{ element.book_name }}</h5>
-                    <p class="card-text">this is post of <h1>{{ element.book_review }}</h1></p>
-                    <p> {{ element.created_at }}</p>
-                    <a href="#" class="btn btn-primary">Button</a>
-                </div>
+    {% for element in posts %}
+        <div class="card w-50 mx-auto mt-5">
+            <div class="card-body">
+                <h5 class="card-title">{{ element.book_author }}</h5>
+                <h5 class="card-title">{{ element.book_name }}</h5>
+                <p class="card-text">{{ element.book_review|truncatechars:200 }}</p>
+                <p> {{ element.created_at }}</p>
+                <a class="btn btn-primary" href="{% url 'post_detail' pk=element.pk %}">Читать полностью</a>
+
+                {% if profile.user == request.user %}
+                    <a class="btn btn-secondary" href="{% url 'post_edit' pk=element.pk %}">Изменить пост</a>
+                {% endif %}
             </div>
-            {% endfor %}
+        </div>
+    {% endfor %}
+
     {% endblock %}
