@@ -1,0 +1,12 @@
+{% extends 'user_example/base_user.html' %}
+
+
+{% block content %}
+
+    <form action="{% url 'post_delete' pk=post.pk%}" method="post">
+        {% csrf_token %}
+        <h3>Вы уверены, что хотите удалить данный пост?</h3>
+        <a href="{{ post.get_absolute_url }}">Вернуться</a>
+        <button type="submit" name="button" class="btn btn-danger">Удалить</button>
+    </form>
+{% endblock %}

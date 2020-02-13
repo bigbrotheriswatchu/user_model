@@ -1,18 +1,26 @@
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseNotFound
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.urls import reverse
 from django.utils import timezone
-from django.views.generic import RedirectView
+
+from .utils import ObjectDetailMixin
+from django.views.generic import RedirectView,View
 
 from .forms import ExtendedUserCreationForm, UserProfileForm, PostForm
 from .models import UserProfile, PostProfile
 from django.contrib.auth.models import User
+
 from django.core.paginator import Paginator
+
 
 def index(request):
     posts = PostProfile.objects.filter().order_by('-created_at')
-    paginator = Paginator(posts, 1)
+    paginator = Paginator(posts, 3)
+
+    users = User.objects.all()
 
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
@@ -27,16 +35,14 @@ def index(request):
     else:
         prev_url = ''
 
-    context = {'prev': prev_url, 'next': next_url, 'page_obj': page,}
+    context = {'prev': prev_url, 'next': next_url, 'page_obj': page, "users": users}
     return render(request, 'user_example/index.html', context=context)
 
 
 @login_required
 def profile(request, pk):
     profile = get_object_or_404(UserProfile, pk=pk)
-
-    user = get_object_or_404(User, pk=pk)
-    posts = PostProfile.objects.filter(author=user)
+    posts = PostProfile.objects.filter().order_by('-created_at')
 
     if request.method == 'POST':
         post_form = PostForm(request.POST)
@@ -85,7 +91,7 @@ def profile_edit(request, pk):
     profile_page = get_object_or_404(UserProfile, pk=pk)
 
     if request.method == 'POST':
-        form = UserProfileForm(request.POST, instance=profile_page)
+        form = UserProfileForm(request.POST, request.FILES or None, instance=profile_page)
 
         if form.is_valid():
             profile_user = form.save(commit=False)
@@ -100,9 +106,21 @@ def profile_edit(request, pk):
     return render(request, 'user_example/edit_profile.html', context=context)
 
 
-def post_detail(request, pk):
-    post = get_object_or_404(PostProfile, pk=pk)
-    return render(request, 'user_example/post_detail.html', context={'post': post})
+#class PostDelete(View):
+    #def get(self, request, pk):
+        #post = PostProfile.objects.get(pk=pk)
+        #return render(request, 'user_example/post_delete_form.html', context={'post': post})
+
+    #def post(self, request, pk):
+        #profile_page = get_object_or_404(UserProfile, pk=pk)
+        #post = PostProfile.objects.get(pk=pk)
+       #post.delete()
+        #return redirect('profile')
+
+
+class PostDetail(ObjectDetailMixin, View):
+    model = PostProfile
+    template = 'user_example/post_detail.html'
 
 
 def post_edit(request, pk):
@@ -123,6 +141,12 @@ def post_edit(request, pk):
     return render(request, 'user_example/post_edit.html', context={'form': form})
 
 
+def post_del(request, pk=None):
+    post = get_object_or_404(PostProfile, pk=pk)
+    post.delete()
+    return redirect('profile', pk=request.user.userprofile.pk)
+
+
 class PostLikeToggle(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         pk = self.kwargs.get('pk')
@@ -138,3 +162,36 @@ class PostLikeToggle(RedirectView):
             else:
                 obj.likes.add(user)
         return url_
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import authentication, permissions
+
+
+class PostLikeAPIToggle(APIView):
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, pk=None, format=None):
+        obj = get_object_or_404(PostProfile, pk=pk)
+        url_ = obj.get_absolute_url()
+        user = self.request.user
+
+        updated = False
+        liked = False
+
+        if user.is_authenticated:
+            if user in obj.likes.all():
+                liked = False
+                obj.likes.remove(user)
+            else:
+                liked = True
+                obj.likes.add(user)
+
+            updated = True
+
+        data = {
+            "updated": updated,
+            "liked": liked,
+            }
+        return Response(data)

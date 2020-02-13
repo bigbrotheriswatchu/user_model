@@ -10,40 +10,60 @@
 
     {% endblock %}
 
-    {% block content %}
-    <h1>Добавление информации: </h1>
-    <form method="POST" class="form-group" >
+{% block content %}
+<div class="container col-md-10 mx-auto">
+    <h2 class="text-center">Добавление информации: </h2>
+    <form method="POST" class="form-group col-md-10 mx-auto mt-5" enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="form-row mt-3">
+        <div class="form-group col-md-4 mx-auto">
+            <h4 class="">Аватар:</h4>
+            <input type="file" class="form-control-file" id="exampleFormControlFile1" {{ form.image }}
+        </div>
+        <div class="form-group col-md-4 mx-auto">
+            <h4 class="">Фон:</h4>
+            <input type="file" class="form-control-file" id="exampleFormControlFile2" {{ form.background_image }}
+        </div>
+        <div class="form-row mt-4 col-md-10 mx-auto">
             <div class="col">
-              <input type="text" class="form-control" placeholder="First name" {{ form.favorite_auths }}
+              <h4>Имя:</h4>
+              <input type="text" class="form-control" placeholder="Имя" {{ form.first_name }}
             </div>
             <div class="col">
-              <input type="text" class="form-control" placeholder="Last name" {{ form.location }}
+              <h4>Фамилия:</h4>
+              <input type="text" class="form-control" placeholder="Фамилия" {{ form.last_name }}
+            </div>
+            <div class="col">
+              <h4>Локация:</h4>
+               <input type="text" class="form-control" placeholder="Место положения" {{ form.location }}
             </div>
         </div>
-        <div class="form-row mt-3">
-            <div class="col">
-              <input type="text" class="form-control" placeholder="First name" {{ form.first_name }}
+        <div class="form-row mt-3 col-md-12 mx-auto">
+            <div class="form-group col">
+              <h3>Любимые авторы:</h3>
+              <textarea type="text" class="form-control" placeholder="Любимые авторы" {{ form.favorite_auths }}
+
+              </textarea>
             </div>
-            <div class="col">
-              <input type="text" class="form-control" placeholder="Last name" {{ form.last_name }}
+            <div class="form-group col">
+              <h3>Любимые книги:</h3>
+              <textarea type="text" class="form-control" placeholder="Любимые книги" {{ form.favorite_books }}
+              </textarea>
+            </div>
+            <div class="form-group col">
+              <h3>Любимые цитаты:</h3>
+              <textarea type="text" class="form-control" placeholder="Любимые цитаты" {{ form.favorite_quote }}
+
+              </textarea>
             </div>
         </div>
-        <div class="form-row mt-3">
-            <div class="col">
-              <input type="text" class="form-control" placeholder="First name" {{ form.favorite_auths }}
-            </div>
-            <div class="col">
-              <input type="text" class="form-control" placeholder="Last name" {{ form.favorite_books }}
-            </div>
-            <div class="col">
-              <input type="text" class="form-control" placeholder="Last name" {{ form.favorite_quote }}
-            </div>
+        <div class="col-md-2">
+            <h3>Возраст:</h3>
+            <input type="text" class="form-control" placeholder="Введите возраст" {{ form.age }}
+            <button type="submit" class="btn btn-success mt-3" >Сохранить</button>
         </div>
 
-        <input class="form-control form-control-sm col-1 mt-3" type="text" placeholder=".form-control-sm" {{ form.age }}
-        <button type="submit" class="btn btn-success mt-3" >Сохранить</button>
+
 
     </form>
-    {% endblock %}
+</div>
+{% endblock %}

@@ -26,7 +26,8 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('first_name', 'last_name', 'age', 'location',
-                  'favorite_auths', 'favorite_books', 'favorite_quote'
+                  'favorite_auths', 'favorite_books', 'favorite_quote',
+                  'image', 'background_image',
                   )
 
 

@@ -1,13 +1,57 @@
 {% extends 'user_example/base_user.html' %}
+{% block jquery %}
+<script>
+     $(document).ready(function(){
+          function updateText(btn, newCount, verb){
+          btn.text(newCount + " " + verb)
+      }
+
+      $(".like-btn").click(function(e){
+        e.preventDefault()
+        var this_ = $(this)
+        var likeUrl = this_.attr("data-href")
+        var likeCount = parseInt(this_.attr("data-likes"))
+        var addLike = likeCount + 1
+        var removeLike = likeCount - 1
+        if (likeUrl){
+           $.ajax({
+            url: likeUrl,
+            method: "GET",
+            data: {},
+            success: function(data){
+              console.log(data)
+              var newLikes;
+              if (data.liked){
+                  updateText(this_, addLike, "Unlike")
+              } else {
+                  updateText(this_, removeLike, "Like")
+                  // remove one like
+              }
+
+            }, error: function(error){
+              console.log(error)
+              console.log("error")
+            }
+          })
+        }
+
+      })
+     })
+</script>
+{% endblock%}
 
 {% block content %}
     <div class="card w-50 mx-auto mt-5">
         <div class="card-body">
-            <h5 class="card-title">{{ post.book_author }}</h5>
-            <h5 class="card-title">{{ post.book_name }}</h5>
-            <p class="card-text">{{ post.book_review }}</p>
-            <p> {{ post.created_at }}</p>
-            <p> likes: {{ post.likes.count }} </p>
+            <h5 class="card-title">{{ postprofile.book_author }}</h5>
+            <h5 class="card-title">{{ postprofile.book_name }}</h5>
+            <p class="card-text">{{ postprofile.book_review }}</p>
+            <p> {{ postprofile.created_at }}</p>
+            <p>
+                <a class="like-btn btn btn-primary" data-href=" {{ postprofile.get_api_like_url }} " data-likes="{{ postprofile.likes.count }}" href="{{ postprofile.get_like_url }}">
+                    {{ postprofile.likes.count }} like
+                </a>
+            </p>
         </div>
     </div>
 {% endblock %}

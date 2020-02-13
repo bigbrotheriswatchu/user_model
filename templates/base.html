@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -45,18 +46,19 @@
         <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
       </li>
 
-      <li class="nav-item text-light" >
+      <li class="nav-item text-light row" >
         {% if request.user.is_authenticated %}
             {% if request.user.is_staff %}
-                <a class="nav-link disabled text-light" href="/admin" >Вы админ</a>
+                <a class="nav-link disabled text-light ml-3" href="/admin" >Вы админ</a>
             {% else %}
-                <a class="nav-link disabled text-light" href="{% url 'profile' pk=request.user.userprofile.pk %}" >
+                <a class="nav-link disabled text-light ml-3" href="{% url 'profile' pk=request.user.userprofile.pk %}" >
                     {{ request.user.userprofile.first_name }} {{ request.user.userprofile.last_name }}
                 </a>
             {% endif %}
         {% else %}
-            <a class="nav-link disabled text-light" href="accounts/login" >Войдите в профиль</a>
+            <a class="nav-link disabled text-light ml-3 " href="accounts/login" >Войдите в профиль</a>
         {% endif %}
+          <a class="nav-link disabled text-light" href="accounts/logout">Выйти</a>
       </li>
 
     </ul>
@@ -64,21 +66,55 @@
 
 </nav>
 
-<main role="main">
+
 
   <!-- Main jumbotron for a primary marketing message or call to action -->
   <div class="jumbotron">
-    <div class="container">
         {% block content %}
         {% endblock %}
-    </div>
   </div>
 
 
+   {% include 'js.html' %}
 
-  </div> <!-- /container -->
+    <script>
+     $(document).ready(function(){
+          function updateText(btn, newCount, verb){
+          btn.text(newCount + " " + verb)
+      }
 
-</main>
+      $(".like-btn").click(function(e){
+        e.preventDefault()
+        var this_ = $(this)
+        var likeUrl = this_.attr("data-href")
+        var likeCount = parseInt(this_.attr("data-likes")) | 0
+        var addLike = likeCount + 1
+        var removeLike = likeCount - 1
+        if (likeUrl){
+           $.ajax({
+            url: likeUrl,
+            method: "GET",
+            data: {},
+            success: function(data){
+              console.log(data)
+              var newLikes;
+              if (data.liked){
+                  updateText(this_, addLike, "Unlike")
+              } else {
+                  updateText(this_, removeLike, "Like")
+                  // remove one like
+              }
 
+            }, error: function(error){
+              console.log(error)
+              console.log("error")
+            }
+          })
+        }
+
+      })
+  })
+
+    </script>
   </body>
 </html>

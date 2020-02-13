@@ -7,22 +7,50 @@
 </title>
 
 
-    {% block content %}
-        <div class="col-4 ml-5 mt-5 mx-auto  text-center">
-            <br>
-            <h3>{{ profile.user.email }}</h3>
-            <h3>{{ profile.first_name }}</h3>
-            <br>
-            <h3>{{ profile.last_name }}</h3>
-            <p>{{ profile.age }}</p>
-            <p>{{ profile.location }}</p>
+{% block content %}
+<div class="container">
+  <div class="row">
+
+    <div class="col-md-4 bg-light" style="height: 500px;">
+        <div class="col">
+            {% if profile.image %}
+            <img src="{{ profile.image.url }}" width="250"/>
+            {% endif %}
+
+            <h5>{{ profile.first_name }} {{ profile.last_name }}</h5>
+            <h5>{{ profile.age }}</h5>
+            <h5>{{ profile.location }}</h5>
             {% if profile.user == request.user %}
                 <a href="{% url 'profile_edit' pk=profile.pk %}">Изменить профиль</a>
             {% endif %}
         </div>
+    </div>
 
+    <div class="col-md-8">
+        <div class="container">
+            <div class="row">
+                <div class="col bg-light mr-3 border border-light">
+                    <h5 class="mt-2">Любимые авторы:</h5>
+                    <p> {{ profile.favorite_auths }}</p>
+                </div>
+                <div class="col bg-light  border border-light">
+                    <h5 class="mt-2">Любимые книги:</h5>
+                    <p> {{ profile.favorite_books }}</p>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col bg-light mr-3 border border-light">
+                    <h5 class="mt-2">Любимые цитаты:</h5>
+                    <p>{{ profile.favorite_quote }}</p>
+                </div>
+                <div class="col bg-light border border-light">
+                    <h5 class="mt-2">О себе:</h5>
+                    <p>{{ profile.about_me }}</p>
+                </div>
+            </div>
+        </div>
     {% if profile.user == request.user %}
-        <form method="POST" class="form-group w-50 mt-4 mx-auto">
+        <form method="POST" class="form-group mt-4">
           {% csrf_token %}
           <div class="form-group">
             <input type="text" class="form-control col-5" id="formGroupExampleInput2" placeholder="Автор книги" {{ form.book_author }}
@@ -34,20 +62,25 @@
         </form>
     {% endif %}
 
-    {% for element in posts %}
-        <div class="card w-50 mx-auto mt-5">
+    {% for post in posts %}
+        <div class="card mt-4">
             <div class="card-body">
-                <h5 class="card-title">{{ element.book_author }}</h5>
-                <h5 class="card-title">{{ element.book_name }}</h5>
-                <p class="card-text">{{ element.book_review|truncatechars:200 }}</p>
-                <p> {{ element.created_at }}</p>
-                <a class="btn btn-primary" href="{% url 'post_detail' pk=element.pk %}">Читать полностью</a>
+                <h5 class="card-title">{{ post.book_author }}</h5>
+                <h5 class="card-title">{{ post.book_name }}</h5>
+                <p class="card-text">{{ post.book_review|truncatechars:200 }}</p>
+                <p> {{ post.created_at }}</p>
+                <a class="btn btn-primary" href="{% url 'post_detail' pk=post.pk %}">Читать полностью</a>
 
                 {% if profile.user == request.user %}
-                    <a class="btn btn-secondary" href="{% url 'post_edit' pk=element.pk %}">Изменить пост</a>
+                    <a class="btn btn-secondary" href="{% url 'post_edit' pk=post.pk %}">Изменить пост</a>
                 {% endif %}
+
+                <a class="btn btn-danger" href="{% url 'post_del' pk=post.pk %}">Удалить пост</a>
             </div>
         </div>
     {% endfor %}
+    </div>
+</div>
+</div>
 
     {% endblock %}
